@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %> | <%= siteName %></title>
+</head>
+<body>
+  <header>
+    <h1><%= siteName %></h1>
+    <p>
+      <a href="/">External</a>
+      <a href="/account">Internal</a>
+    </p>
+    <nav>
+      <ul>
+        <% menu.forEach(item => { %>
+          <li>
+            <a href="/<%= item.slug %>">
+              <% if (item.page === title) { %>
+                <strong><%= item.page %></strong>
+              <% } else { %>
+                <%= item.page %>
+              <% } %>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </nav>
+  </header>

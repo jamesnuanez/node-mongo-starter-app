@@ -1,0 +1,17 @@
+{
+  "name": "node-mongo-boiler-plate",
+  "version": "1.0.0",
+  "description": "Starter code to build a Node.js app with MongoDB and Passport.js using a local strategy.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Nuanez",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.8"
+  }
+}
