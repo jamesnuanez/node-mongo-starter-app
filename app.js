@@ -1,19 +1,18 @@
 //=============================================================================
-// Requires
+// General setup
 //=============================================================================
 const express   = require('express');
 const mongoose  = require('mongoose');
-const external  = require('./routes/external');
-const internal  = require('./routes/internal');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-//=============================================================================
-// Setup
-//=============================================================================
 const app = express();
 
 require('dotenv').config({ path: 'variables.env' });
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //=============================================================================
 // Mongoose setup
@@ -28,16 +27,21 @@ console.log('#------------------------------------------------------------------
 //=============================================================================
 // Middleware
 //=============================================================================
+// Console log every request
 app.use((req, res, next) => {
   console.log(`${new Date()} ${req.originalUrl}`);
   next();
 });
 
+// Site name available to all routes
 app.locals.siteName = 'Site Name';
 
 //=============================================================================
 // Routes
 //=============================================================================
+const external  = require('./routes/external');
+const internal  = require('./routes/internal');
+
 app.use('/',         external);
 app.use('/account/', internal);
 

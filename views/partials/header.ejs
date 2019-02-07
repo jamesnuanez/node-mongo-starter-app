@@ -7,8 +7,20 @@
   <header>
     <h1><%= siteName %></h1>
     <p>
-      <a href="/">External</a>
-      <a href="/account">Internal</a>
+      <a href="/">
+        <% if (siteSection === 'External') { %>
+          <strong>External</strong>
+        <% } else { %>
+          External
+        <% } %>
+      </a>
+      <a href="/account">
+        <% if (siteSection === 'Internal') { %>
+          <strong>Internal</strong>
+        <% } else { %>
+          Internal
+        <% } %>
+      </a>
     </p>
     <nav>
       <ul>
