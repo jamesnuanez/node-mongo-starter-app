@@ -7,13 +7,13 @@ const router  = express.Router();
 //=============================================================================
 // Middleware
 //=============================================================================
-router.use((req, res, next) => {
-  if (req.cookies['login']) {
-    next();
-  } else {
-    res.send('nope')
-  };
-});
+// router.use((req, res, next) => {
+//   if (req.cookies['login']) {
+//     next();
+//   } else {
+//     res.send('nope')
+//   };
+// });
 
 router.use((req, res, next) => {
   res.locals.siteSection = 'Internal';
@@ -42,7 +42,7 @@ router.get('/invite-users', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  res.clearCookie('login');
+  // res.clearCookie('login');
   res.redirect('/')
 });
 

@@ -38,7 +38,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login', (req, res) => {
   if (req.body.username === username && req.body.password === password) {
-    res.cookie('login', 'true', { maxAge: 60000 })
+    // res.cookie('login', 'true', { maxAge: 60000 })
     res.redirect('/account');
   } else {
     res.send('nope');
