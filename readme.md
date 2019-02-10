@@ -6,6 +6,7 @@ Technology
 * Express
 * Mongoose
 * Passport
+* Flash messages
 * EJS
 * (no CSS)
 

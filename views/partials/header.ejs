@@ -6,7 +6,7 @@
 <body>
   <header>
     <h1><%= siteName %></h1>
-    <p>
+<!--     <p>
       <a href="/">
         <% if (siteSection === 'External') { %>
           <strong>External</strong>
@@ -37,4 +37,45 @@
         <% }); %>
       </ul>
     </nav>
+ -->
+    <nav>
+      <h3>External</h3>
+      <ul>
+        <% externalMenu.forEach(item => { %>
+          <li>
+            <a href="/<%= item.slug %>">
+              <% if (item.page === title) { %>
+                <strong><%= item.page %></strong>
+              <% } else { %>
+                <%= item.page %>
+              <% } %>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+      <h3>Internal</h3>
+      <ul>
+        <% internalMenu.forEach(item => { %>
+          <li>
+            <a href="/<%= item.slug %>">
+              <% if (item.page === title) { %>
+                <strong><%= item.page %></strong>
+              <% } else { %>
+                <%= item.page %>
+              <% } %>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </nav>
   </header>
+  <section id="flashes">
+    <hr>
+    <h2>Flashes</h2>
+    <% Object.entries(flashes).forEach(entry => { %>
+      <p>
+        <%= entry[0] %>: <%= entry[1] %>
+      </p>
+    <% }) %>
+    <hr>
+  </section>

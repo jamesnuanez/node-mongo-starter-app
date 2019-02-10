@@ -1,8 +1,11 @@
 //=============================================================================
 // Setup
 //=============================================================================
-const express = require('express');
-const router  = express.Router();
+const express  = require('express');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const User     = mongoose.model('User');
+const router   = express.Router();
 
 //=============================================================================
 // Middleware
@@ -14,12 +17,10 @@ router.use((req, res, next) => {
     { page: 'Create account', slug: 'create-account' },
     { page: 'Log in',         slug: 'login' },
     { page: 'Password reset', slug: 'password-reset' },
+    { page: 'Test Flash', slug: 'test-flash' },
   ];
   next();
 });
-
-const username = 'asdf';
-const password = 'qwer';
 
 //=============================================================================
 // Routes
@@ -32,18 +33,32 @@ router.get('/create-account', (req, res) => {
   res.render('external/create-account', { title: 'Create account'});
 });
 
+router.post('/create-account', (req, res) => {
+  User.create({
+    username: req.body.username,
+    password: req.body.password,
+  }, function(err, small) {
+    if (err) return handleError(err);
+    res.redirect('/login');
+  })
+});
+
 router.get('/login', (req, res) => {
   res.render('external/login', { title: 'Log in'});
 });
 
-router.post('/login', (req, res) => {
-  if (req.body.username === username && req.body.password === password) {
-    // res.cookie('login', 'true', { maxAge: 60000 })
-    res.redirect('/account');
-  } else {
-    res.send('nope');
-  }
-});
+// router.post('/login', (req, res) => {
+//   res.redirect('/account');
+// });
+
+router.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/account',
+    failureRedirect: '/login',
+    failureFlash: true,
+    successFlash: 'Welcome!',
+  })
+);
 
 router.get('/password-reset', (req, res) => {
   res.render('external/password-reset', { title: 'Password reset'});
