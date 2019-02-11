@@ -51,7 +51,7 @@ app.use(passport.session());
 passport.use(new LocalStrategy(
   function(username, password, done) {
     User.findOne({ username: username }, function(err, user) {
-      if (err) { return done(err); }
+      if (err) { return done(err) }
       if (!user) {
         return done(null, false, { message: 'Incorrect username' });
       }
@@ -76,14 +76,9 @@ passport.deserializeUser(function(id, done) {
 //=============================================================================
 // Middleware
 //=============================================================================
-// Console log every request
+// Applies to all routes
 app.use((req, res, next) => {
   console.log(`${new Date()} ${req.originalUrl}`);
-  next();
-});
-
-// Things available to all routes
-app.use((req, res, next) => {
   res.locals.siteName = 'Site Name';
   res.locals.flashes  = req.flash();
   console.log(res.locals.flashes);
@@ -111,31 +106,6 @@ app.use((req, res, next) => {
     { page: 'Log out',      slug: 'account/logout' },
   ];
   next();
-});
-
-//=============================================================================
-// Test flash
-//=============================================================================
-app.get('/test-flash', (req, res) => {
-  req.flash('info', 'hello');
-  req.flash('info', 'hello2');
-  req.flash('info', 'hello3');
-  req.flash('anotherthing', 'asdf');
-  res.redirect('/');
-});
-
-app.get('/test-flash-result', (req, res) => {
-  // console.log(req.flash());
-  // res.json(req.flash());
-  res.json(req.flash());
-});
-
-app.get('/login-test', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send('authenticated')
-  } else {
-    res.send('NOT authenticated')
-  }
 });
 
 //=============================================================================
