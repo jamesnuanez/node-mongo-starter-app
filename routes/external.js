@@ -34,22 +34,16 @@ router.get('/create-account', (req, res) => {
 });
 
 router.post('/create-account', (req, res) => {
-  User.create({
-    username: req.body.username,
-    password: req.body.password,
-  }, function(err, small) {
-    if (err) return handleError(err);
+  const user = new User({username: req.body.username});
+  User.register(user, req.body.password, function(err, user) {
+    if (err) throw (err);
     res.redirect('/login');
-  })
+  });
 });
 
 router.get('/login', (req, res) => {
   res.render('external/login', { title: 'Log in'});
 });
-
-// router.post('/login', (req, res) => {
-//   res.redirect('/account');
-// });
 
 router.post('/login',
   passport.authenticate('local', {

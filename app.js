@@ -2,11 +2,11 @@
 // General setup
 //=============================================================================
 const express       = require('express');
-const mongoose      = require('mongoose');
 const session       = require('express-session');
-const flash         = require('connect-flash');
-const MongoStore    = require('connect-mongo')(session);
 const bodyParser    = require('body-parser');
+const flash         = require('connect-flash');
+const mongoose      = require('mongoose');
+const MongoStore    = require('connect-mongo')(session);
 const passport      = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -34,11 +34,11 @@ const User = mongoose.model('User');
 // Session
 //=============================================================================
 app.use(session({
-  secret: 'alksdjfasd8f9ajsdfqw23hf2987fa9ysd8fa',
-  name:   'session',
+  secret: process.env.SESSION_SECRET,
+  name: 'session',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 60000 }, // 1 minute (short for testing, should be increased)
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 }));
 
@@ -48,30 +48,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
-      if (err) { return done(err) }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username' });
-      }
-      if (user.password !== password) {
-        return done(null, false, { message: 'Incorrect password' });
-      }
-      return done(null, user);
-    });
-  }
-));
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //=============================================================================
 // Middleware
@@ -86,14 +65,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Both external and internal menus available for testing
+// Both external and internal menus available for testing purposes
 app.use((req, res, next) => {
   res.locals.externalMenu = [
     { page: 'Home',           slug: '' },
     { page: 'Create account', slug: 'create-account' },
     { page: 'Log in',         slug: 'login' },
     { page: 'Password reset', slug: 'password-reset' },
-    { page: 'Test Flash',     slug: 'test-flash' },
   ];
   next();
 });
