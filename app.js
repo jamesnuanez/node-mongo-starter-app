@@ -38,7 +38,7 @@ app.use(session({
   name: 'session',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000 }, // 1 minute (short for testing, should be increased)
+  cookie: { maxAge: 600000 },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 }));
 
@@ -60,8 +60,6 @@ app.use((req, res, next) => {
   console.log(`${new Date()} ${req.originalUrl}`);
   res.locals.siteName = 'Site Name';
   res.locals.flashes  = req.flash();
-  console.log(res.locals.flashes);
-  console.log(req.user);
   next();
 });
 
@@ -78,10 +76,12 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   res.locals.internalMenu = [
-    { page: 'Account home', slug: 'account/' },
-    { page: 'Edit account', slug: 'account/edit-account' },
-    { page: 'Invite users', slug: 'account/invite-users' },
-    { page: 'Log out',      slug: 'account/logout' },
+    { page: 'Account home',    slug: 'account/' },
+    { page: 'Account details', slug: 'account/account-details' },
+    { page: 'Change email',    slug: 'account/change-email' },
+    { page: 'Change password', slug: 'account/change-password' },
+    { page: 'Invite users',    slug: 'account/invite-users' },
+    { page: 'Log out',         slug: 'account/logout' },
   ];
   next();
 });

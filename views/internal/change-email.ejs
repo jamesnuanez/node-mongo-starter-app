@@ -1,0 +1,17 @@
+<% include ../partials/header %>
+
+<h1><%= title %></h1>
+
+<p>User ID: <%= user._id %></p>
+
+<p>
+  <form action="/account/change-email/<%= user._id %>" method="POST">
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email" value="<%= user.email %>">
+    <button>Update</button>
+  </form>
+</p>
+
+<a href="/account/account-details">Cancel</a>
+
+<% include ../partials/footer %>
