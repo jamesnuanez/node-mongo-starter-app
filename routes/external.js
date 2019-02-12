@@ -34,7 +34,7 @@ router.get('/create-account', (req, res) => {
 });
 
 router.post('/create-account', (req, res, next) => {
-  const user = new User({username: req.body.username});
+  const user = new User({email: req.body.email});
   User.register(user, req.body.password, function(err, user) {
     if (err) return next(err);
     req.login(user, function(err) {
