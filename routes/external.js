@@ -33,12 +33,16 @@ router.get('/create-account', (req, res) => {
   res.render('external/create-account', { title: 'Create account'});
 });
 
-router.post('/create-account', (req, res) => {
+router.post('/create-account', (req, res, next) => {
   const user = new User({username: req.body.username});
   User.register(user, req.body.password, function(err, user) {
-    if (err) throw (err);
-    res.redirect('/login');
+    if (err) return next(err);
+    req.login(user, function(err) {
+      if (err) return next(err);
+      res.redirect('/account');
+    });
   });
+
 });
 
 router.get('/login', (req, res) => {
