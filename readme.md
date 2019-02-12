@@ -8,7 +8,7 @@ Technology
 * Passport
 * Flash messages
 * EJS
-* (no CSS)
+* (no CSS or front end JavaScript)
 
 ## To Do
 * Nodemailer
