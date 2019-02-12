@@ -11,12 +11,10 @@ Technology
 * (no CSS)
 
 ## To Do
-* Install and configure Passport.js
-* Reset password
-* Edit account
-  - change email
-  - change password
-* Handle all routes logged in or out
-  - if logged in and viewing external site, show link to account
-  - redirect login to home page
-  - redirect create-account to invite-user (?) (maybe with a flash message?)
+* Nodemailer
+* Password reset
+* Invite users
+* Email account verification
+* Handle external routes when logged in
+  - show message and link to account home page
+  - block login and account creation forms
