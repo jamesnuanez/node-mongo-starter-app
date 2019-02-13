@@ -6,12 +6,12 @@ Technology
 * Express
 * Mongoose
 * Passport
+* Nodemailer
 * Flash messages
 * EJS
 * (no CSS or front end JavaScript)
 
 ## To Do
-* Nodemailer
 * Password reset
 * Invite users
 * Email account verification
