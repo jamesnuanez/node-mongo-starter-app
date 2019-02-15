@@ -101,6 +101,28 @@ router.post('/change-password/:id', (req, res) => {
   }
 });
 
+router.get('/delete-account', (req, res) => {
+  res.render('internal/delete-account', { title: 'Delete account'});
+});
+
+router.post('/delete-account/:id', (req, res) => {
+  if (req.params.id === req.user._id.toString()) {
+    User.findByIdAndDelete(req.params.id, function(err, user) {
+      if (err) {
+        console.log(err);
+        req.flash('error', err.message);
+        res.redirect('back');
+      } else {
+        req.flash('success', 'Account deleted');
+        res.redirect('/');
+      };
+    });
+  } else {
+    req.flash('error', 'Something went wrong');
+    res.redirect('back');
+  };
+});
+
 //-----------------------------------------------------------------------------
 // Invite users
 //-----------------------------------------------------------------------------

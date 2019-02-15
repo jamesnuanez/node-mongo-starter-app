@@ -1,0 +1,19 @@
+<% include ../partials/header %>
+
+<h1><%= title %></h1>
+
+<p>User ID: <%= user._id %></p>
+
+<p>Are you sure you want to delete your account?</p>
+
+<p>
+  <form action="/account/delete-account/<%= user._id %>" method="POST">
+    <button>Delete my Account</button>
+  </form>
+</p>
+
+<p>
+  <a href="/account/account-details">Cancel</a>
+</p>
+
+<% include ../partials/footer %>
