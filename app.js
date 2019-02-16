@@ -52,7 +52,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //=============================================================================
-// Middleware
+// Custom middleware
 //=============================================================================
 // Applies to all routes
 app.use((req, res, next) => {
@@ -89,11 +89,13 @@ app.use((req, res, next) => {
 //=============================================================================
 // Routes
 //=============================================================================
-const external  = require('./routes/external');
-const internal  = require('./routes/internal');
+const external      = require('./routes/external');
+const internal      = require('./routes/internal');
+const passwordReset = require('./routes/password-reset');
 
-app.use('/',         external);
-app.use('/account/', internal);
+app.use('/',               external);
+app.use('/account/',       internal);
+app.use('/password-reset', passwordReset)
 
 //=============================================================================
 // Launch app

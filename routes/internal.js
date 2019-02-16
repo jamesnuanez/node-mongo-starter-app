@@ -5,6 +5,7 @@ const express  = require('express');
 const router   = express.Router();
 const mongoose = require('mongoose');
 const User     = mongoose.model('User');
+const mail     = require('../mail/mail');
 
 //=============================================================================
 // Middleware
@@ -37,6 +38,9 @@ router.use((req, res, next) => {
 //=============================================================================
 // Routes
 //=============================================================================
+//-----------------------------------------------------------------------------
+// Account home
+//-----------------------------------------------------------------------------
 router.get('/', (req, res) => {
   res.render('internal/home', { title: 'Account home' });
 });
@@ -138,6 +142,18 @@ router.get('/logout', (req, res) => {
   req.flash('info', 'See you next time')
   res.redirect('/')
 });
+
+//-----------------------------------------------------------------------------
+// Resend verification email
+//-----------------------------------------------------------------------------
+router.get('/resend-verification-email', (req, res) => {
+  if (req.user.emailVerified === true) {
+    req.flash('info', 'Email already verified');
+  } else {
+    mail.emailVerification(req, res, req.user.emailVerificationToken);
+  }
+}),
+
 
 //=============================================================================
 // Export routes
