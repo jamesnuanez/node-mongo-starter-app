@@ -9,7 +9,6 @@ const mongoose      = require('mongoose');
 const MongoStore    = require('connect-mongo')(session);
 const passport      = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const nodemailer    = require('nodemailer');
 
 const app = express();
 require('dotenv').config({ path: 'variables.env' });
@@ -53,40 +52,6 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //=============================================================================
-// Nodemailer
-//=============================================================================
-const transporter = nodemailer.createTransport({
-  host:   process.env.EMAIL_HOST,
-  port:   process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  }
-});
-
-const mailOptions = {
-  from:    process.env.EMAIL_FROM,
-  to:      process.env.EMAIL_TO,
-  subject: 'Test subject-allnow',
-  text:    'Plain text email',
-  html:    '<p><strong>HTML</strong> email</p>',
-}
-
-app.get('/mail', (req, res) => {
-  transporter.sendMail(mailOptions, function(err, info) {
-    if (err) {
-      console.log(err);
-      req.flash('error', 'Error when sending mail');
-      res.redirect('/');
-    } else {
-      req.flash('success', 'Mail sent successfully');
-      res.redirect('/');
-    }
-  });
-});
-
-//=============================================================================
 // Middleware
 //=============================================================================
 // Applies to all routes
@@ -114,6 +79,7 @@ app.use((req, res, next) => {
     { page: 'Account details', slug: 'account/account-details' },
     { page: 'Change email',    slug: 'account/change-email' },
     { page: 'Change password', slug: 'account/change-password' },
+    { page: 'Delete account',  slug: 'account/delete-account' },
     { page: 'Invite users',    slug: 'account/invite-users' },
     { page: 'Log out',         slug: 'account/logout' },
   ];

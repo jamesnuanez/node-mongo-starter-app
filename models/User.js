@@ -8,6 +8,23 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     required: 'Username required',
   },
+  signupDate: {
+    type: Date,
+    default: Date.now,
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationToken: String,
+  emailVerificationDate: Date,
+  passwordResetInProgress: {
+    type: Boolean,
+    default: false,
+  },
+  passwordResetRequestDate: Date,
+  passwordResetToken: String,
+  passwordResetTokenExpiration: Date,
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });

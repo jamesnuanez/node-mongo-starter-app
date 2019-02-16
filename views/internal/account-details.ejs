@@ -4,6 +4,10 @@
 
 <p>User ID: <%= user._id %></p>
 
+<% if (user.emailVerified === false ) { %>
+  <p>Email address not verified. <a href="/verify-email">Resend verification email</a></p>
+<% } %>
+
 <p>Email: <%= user.email %> <a href="change-email">Edit</a></p>
 <p>Password: **** <a href="change-password">Edit</a></p>
 <p><a href="delete-account">Delete account</a></p>
