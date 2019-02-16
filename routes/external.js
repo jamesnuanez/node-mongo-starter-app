@@ -82,7 +82,7 @@ router.get('/verify-account/:token', (req, res) => {
     { emailVerificationToken: req.params.token },
     {
       emailVerified: true,
-      emailVerificationDate: Date.now,
+      emailVerificationDate: Date.now(),
     },
     { new: true },
     (err, user) => {
@@ -92,8 +92,9 @@ router.get('/verify-account/:token', (req, res) => {
         res.redirect('/');
       } else {
         console.log(user.email);
-        res.send(req.params.token);
-      }
+        req.flash('success', 'Email verified');
+        res.redirect('/');
+      };
   });
 });
 
