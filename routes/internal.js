@@ -29,7 +29,7 @@ router.use((req, res, next) => {
   res.locals.menu = [
     { page: 'Account home', slug: 'account/' },
     { page: 'Edit account', slug: 'account/edit-account' },
-    { page: 'Invite users', slug: 'account/invite-users' },
+    { page: 'Invite user',  slug: 'account/invite-user' },
     { page: 'Log out',      slug: 'account/logout' },
   ];
   next();
@@ -128,10 +128,20 @@ router.post('/delete-account/:id', (req, res) => {
 });
 
 //-----------------------------------------------------------------------------
-// Invite users
-//-----------------------------------------------------------------------------
-router.get('/invite-users', (req, res) => {
-  res.render('internal/invite-users', { title: 'Invite users' });
+// Invite user
+// -----------------------------------------------------------------------------
+router.get('/invite-user', (req, res) => {
+  res.render('internal/invite-user', { title: 'Invite user' } );
+});
+
+router.post('/invite-user', (req, res) => {
+  console.log(req.body.email);
+  if (!req.body.email) {
+    req.flash('error', 'Please provide an email address');
+    res.redirect('back');
+  } else {
+    mail.inviteUser(req, res);
+  };
 });
 
 //-----------------------------------------------------------------------------
@@ -147,11 +157,12 @@ router.get('/logout', (req, res) => {
 // Resend verification email
 //-----------------------------------------------------------------------------
 router.get('/resend-verification-email', (req, res) => {
+  console.log(req.user)
   if (req.user.emailVerified === true) {
     req.flash('info', 'Email already verified');
   } else {
-    mail.emailVerification(req, res, req.user.emailVerificationToken);
-  }
+    mail.emailVerification(req, res);
+  };
 }),
 
 

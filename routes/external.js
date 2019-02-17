@@ -5,13 +5,9 @@ const express  = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const crypto   = require('crypto');
-const User     = mongoose.model('User');
-const router   = express.Router();
 const mail     = require('../mail/mail')
-
-//=============================================================================
-// Middleware
-//=============================================================================
+const router   = express.Router();
+const User     = mongoose.model('User');
 
 //=============================================================================
 // Routes
@@ -43,7 +39,7 @@ router.post('/login',
 // Create account
 //-----------------------------------------------------------------------------
 router.get('/create-account', (req, res) => {
-  res.render('external/create-account', { title: 'Create account'});
+  res.render('external/create-account', { title: 'Create account', email: req.query.email });
 });
 
 router.post('/create-account', (req, res, next) => {
@@ -65,7 +61,7 @@ router.post('/create-account', (req, res, next) => {
             user.save((err) => {
               if (err) throw err;
               req.flash('success', 'Account created');
-              mail.emailVerification(req, res, user.emailVerificationToken);
+              mail.emailVerification(req, res);
             });
           });
         };
@@ -86,6 +82,7 @@ router.get('/verify-email/:token', (req, res) => {
         req.flash('error', err);
         res.redirect('/');
       } else {
+        console.log(user)
         if (user.emailVerified === true) {
           req.flash('info', 'Email already verified');
           res.redirect('/')

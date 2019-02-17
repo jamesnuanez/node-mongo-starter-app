@@ -12,9 +12,6 @@ Technology
 * (no CSS or front end JavaScript)
 
 ## To Do
-* Password reset
-* Invite users
-* Email account verification
 * Handle external routes when logged in
   - show message and link to account home page
   - block login and account creation forms

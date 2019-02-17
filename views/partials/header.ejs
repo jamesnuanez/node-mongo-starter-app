@@ -37,13 +37,15 @@
       </ul>
     </nav>
   </header>
-  <section id="flashes">
-    <hr>
-    <h2>Flashes</h2>
-    <% Object.entries(flashes).forEach(entry => { %>
-      <p>
-        <%= entry[0] %>: <%= entry[1] %>
-      </p>
-    <% }) %>
-    <hr>
-  </section>
+  <hr>
+  <% if (Object.entries(flashes).length) { %>
+    <section id="flashes">
+      <% Object.entries(flashes).forEach(entry => { %>
+        <p>
+          <%= entry[0] %>: <%= entry[1] %>
+        </p>
+      <% }) %>
+      <hr>
+    </section>
+  <% } %>
+  <h1><%= title %></h1>

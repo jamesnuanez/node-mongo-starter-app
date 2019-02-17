@@ -25,11 +25,11 @@ const transporter = nodemailer.createTransport({
 //=============================================================================
 // Email verification
 //=============================================================================
-exports.emailVerification = (req, res, token) => {
+exports.emailVerification = (req, res) => {
 
   const emailVerificationHTML = `
   <p>
-    <a href="${req.protocol}://${req.headers.host}/verify-email/${token}">
+    <a href="${req.protocol}://${req.headers.host}/verify-email/${req.user.emailVerificationToken}">
       Verify email with ${res.locals.siteName}
     </a>
   </p>
@@ -40,7 +40,7 @@ exports.emailVerification = (req, res, token) => {
   const emailVerificationText = `
   An account was created on ${res.locals.siteName} with this email address.
   Please visit the following URL to verify your email address.
-  ${req.protocol}://${req.headers.host}/verify-email/${token}
+  ${req.protocol}://${req.headers.host}/verify-email/${req.user.emailVerificationToken}
   `;
 
   transporter.sendMail({
@@ -96,6 +96,45 @@ exports.passwordReset = (req, res, user) => {
     } else {
       req.flash('success', 'Password reset email sent');
       res.redirect('/login');
+    };
+  });
+};
+
+//=============================================================================
+// Invite user
+//=============================================================================
+exports.inviteUser = (req, res) => {
+  const inviteUserHTML = `
+    <p>
+      ${req.user.email} has invited you to create an account on ${res.locals.siteName}.
+    </p>
+    <p>
+      <a href="${req.protocol}://${req.headers.host}/create-account?email=${req.body.email}">
+        Click here to create an account
+      </a>
+    </p>
+  `;
+
+  const inviteUserText = `
+    ${req.user.email} has invited you to create an account on ${res.locals.siteName}.
+    Visit the following link to create an account.
+    ${req.protocol}://${req.headers.host}/create-account?email=${req.body.email}
+  `;
+
+  transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to:   req.body.email,
+    subject: `${res.locals.siteName} | You've been invited to create an account`,
+    text: inviteUserText,
+    html: inviteUserHTML,
+  }, function(error, info) {
+    if (error) {
+      console.log(error);
+      req.flash('error', error);
+      res.redirect('back');
+    } else {
+      req.flash('success', 'Invitation email sent');
+      res.redirect('back');
     };
   });
 };

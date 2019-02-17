@@ -38,7 +38,7 @@ app.use(session({
   name: 'session',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 600000 },
+  cookie: { maxAge: (60 * 60 * 1000) },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 }));
 
@@ -80,7 +80,7 @@ app.use((req, res, next) => {
     { page: 'Change email',    slug: 'account/change-email' },
     { page: 'Change password', slug: 'account/change-password' },
     { page: 'Delete account',  slug: 'account/delete-account' },
-    { page: 'Invite users',    slug: 'account/invite-users' },
+    { page: 'Invite user',     slug: 'account/invite-user' },
     { page: 'Log out',         slug: 'account/logout' },
   ];
   next();
