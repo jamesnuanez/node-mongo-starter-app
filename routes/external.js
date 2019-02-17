@@ -139,6 +139,20 @@ router.get('/resend-verification-email', (req, res) => {
   res.redirect('back');
 }),
 
+//-----------------------------------------------------------------------------
+// Logout
+//-----------------------------------------------------------------------------
+router.get('/logout', (req, res) => {
+  if (req.user) {
+    req.logout();
+    req.flash('info', 'See you next time')
+    res.redirect('/');
+  } else {
+    req.flash('info', 'You weren\'t logged in');
+    res.redirect('/');
+  }
+});
+
 //=============================================================================
 // Export routes
 //=============================================================================

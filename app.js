@@ -82,7 +82,7 @@ app.use((req, res, next) => {
     { page: 'Change password', slug: 'account/change-password' },
     { page: 'Delete account',  slug: 'account/delete-account' },
     { page: 'Invite user',     slug: 'account/invite-user' },
-    { page: 'Log out',         slug: 'account/logout' },
+    { page: 'Log out',         slug: 'logout' },
   ];
   next();
 });
