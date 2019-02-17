@@ -103,7 +103,22 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
   } else {
     req.flash('info', 'You weren\'t logged in');
-    res.redirect('/');
+    res.redirect('back');
+  }
+});
+
+/*
+This is used on the create-account and log-in pages to redirect the user back
+to the page they were one when they clicked log out.
+*/
+router.get('/external-logout', (req, res) => {
+  if (req.user) {
+    req.logout();
+    req.flash('info', 'See you next time')
+    res.redirect('back');
+  } else {
+    req.flash('info', 'You weren\'t logged in');
+    res.redirect('back');
   }
 });
 
