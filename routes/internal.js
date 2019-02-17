@@ -2,22 +2,32 @@
 // Setup
 //=============================================================================
 const express  = require('express');
-const router   = express.Router();
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const User     = mongoose.model('User');
 const mail     = require('../mail/mail');
+const router   = express.Router();
+const User     = mongoose.model('User');
 
 //=============================================================================
 // Middleware
 //=============================================================================
-router.use((req, res, next) => {
-  if (!req.isAuthenticated()) {
-    req.flash('error', 'Please log in to access that page');
-    res.redirect('/login')
-    return;
+router.use(
+  cookieParser(),
+  (req, res, next) => {
+    if (!req.isAuthenticated()) {
+      /*
+      Adding a cookie in order to redirect to the requested page once logged in.
+      Using cookie parser instead of session so that this cookie gets cleared
+      when the browser closes, instead of when the session expires.
+      */
+      res.cookie('requestedUrl', req.originalUrl);
+      req.flash('error', 'Please log in to access that page');
+      res.redirect('/login')
+      return;
+    }
+    next();
   }
-  next();
-});
+);
 
 router.use((req, res, next) => {
   res.locals.user = req.user;
@@ -135,7 +145,6 @@ router.get('/invite-user', (req, res) => {
 });
 
 router.post('/invite-user', (req, res) => {
-  console.log(req.body.email);
   if (!req.body.email) {
     req.flash('error', 'Please provide an email address');
     res.redirect('back');
@@ -157,7 +166,6 @@ router.get('/logout', (req, res) => {
 // Resend verification email
 //-----------------------------------------------------------------------------
 router.get('/resend-verification-email', (req, res) => {
-  console.log(req.user)
   if (req.user.emailVerified === true) {
     req.flash('info', 'Email already verified');
   } else {

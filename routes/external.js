@@ -2,6 +2,7 @@
 // Setup
 //=============================================================================
 const express  = require('express');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const crypto   = require('crypto');
@@ -27,12 +28,21 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login',
+  cookieParser(),
   passport.authenticate('local', {
-    successRedirect: '/account',
     failureRedirect: '/login',
     failureFlash: true,
     successFlash: 'Welcome!',
-  })
+  }),
+  (req, res) => {
+    /*
+    Check if user attempted to access a page while logged out. If so, redirect
+    to that page. If not, redirect to the account home page.
+    */
+    const redirect = req.cookies.requestedUrl || '/account';
+    res.clearCookie('requestedUrl');
+    res.redirect(redirect);
+  }
 );
 
 //-----------------------------------------------------------------------------
