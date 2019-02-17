@@ -29,7 +29,7 @@ exports.emailVerification = (req, res) => {
 
   const emailVerificationHTML = `
   <p>
-    <a href="${req.protocol}://${req.headers.host}/verify-email/${req.user.emailVerificationToken}">
+    <a href="${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}">
       Verify email with ${res.locals.siteName}
     </a>
   </p>
@@ -40,7 +40,7 @@ exports.emailVerification = (req, res) => {
   const emailVerificationText = `
   An account was created on ${res.locals.siteName} with this email address.
   Please visit the following URL to verify your email address.
-  ${req.protocol}://${req.headers.host}/verify-email/${req.user.emailVerificationToken}
+  ${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}
   `;
 
   transporter.sendMail({

@@ -166,7 +166,42 @@ router.get('/resend-verification-email', (req, res) => {
   };
 }),
 
-
+//-----------------------------------------------------------------------------
+// Verify email
+//-----------------------------------------------------------------------------
+router.get('/verify-email/:token', (req, res) => {
+  User.findOne(
+    { emailVerificationToken: req.params.token },
+    (err, user) => {
+      if (err) {
+        console.log(err);
+        req.flash('error', err);
+        res.redirect('/account');
+      } else if (!user) {
+        req.flash('error', 'Invalid verification link');
+        res.redirect('/account');
+      } else {
+        if (user.emailVerified === true) {
+          req.flash('info', 'Email already verified');
+          res.redirect('/account')
+        } else {
+          user.emailVerified = true;
+          user.emailVerificationDate = Date.now();
+          user.save((err) => {
+            if (err) {
+              console.log(err);
+              req.flash('error', err);
+              res.redirect('/account');
+            } else {
+              req.flash('success', 'Email verified');
+              res.redirect('/account');
+            }
+          });
+        };
+      };
+    }
+  );
+});
 //=============================================================================
 // Export routes
 //=============================================================================
