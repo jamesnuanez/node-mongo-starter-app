@@ -12,6 +12,7 @@ const User     = mongoose.model('User');
 //=============================================================================
 // Middleware
 //=============================================================================
+/* Check if user is logged in */
 router.use(
   cookieParser(),
   (req, res, next) => {
@@ -30,9 +31,17 @@ router.use(
   }
 );
 
+/* If user's email is not verified, show a message */
 router.use((req, res, next) => {
   res.locals.user = req.user;
-  if (req.user.emailVerified === false) {
+  if (req.originalUrl.includes('verif')) {
+    return next();
+  } else if (
+    req.user.emailVerified === false &&
+    req.user.signupDate < (Date.now() - (24 * 60 * 60 * 1000))
+  ) {
+    return res.redirect('/account/verification-required');
+  } else if (req.user.emailVerified === false) {
     res.locals.specialMessage = 'Email address not verified. <a href="/account/resend-verification-email">Resend verification email</a>';
   } else {
     res.locals.specialMessage = '';
@@ -155,19 +164,17 @@ router.post('/invite-user', (req, res) => {
 });
 
 //-----------------------------------------------------------------------------
-// Resend verification email
+// Email verification
 //-----------------------------------------------------------------------------
 router.get('/resend-verification-email', (req, res) => {
   if (req.user.emailVerified === true) {
     req.flash('info', 'Email already verified');
+    res.redirect('back');
   } else {
     mail.emailVerification(req, res);
   };
 }),
 
-//-----------------------------------------------------------------------------
-// Verify email
-//-----------------------------------------------------------------------------
 router.get('/verify-email/:token', (req, res) => {
   User.findOne(
     { emailVerificationToken: req.params.token },
@@ -200,6 +207,10 @@ router.get('/verify-email/:token', (req, res) => {
       };
     }
   );
+});
+
+router.get('/verification-required', (req, res) => {
+  res.render('internal/verification-required', { title: 'Verification required'})
 });
 
 //=============================================================================
