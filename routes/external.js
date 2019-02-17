@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 // Login
 //-----------------------------------------------------------------------------
 router.get('/login', (req, res) => {
-  res.render('external/login', { title: 'Log in'});
+  res.render('external/login', { title: 'Log in', email: req.query.email });
 });
 
 router.post('/login',
@@ -108,7 +108,6 @@ router.get('/verify-email/:token', (req, res) => {
         req.flash('error', 'Invalid verification link');
         res.redirect('/');
       } else {
-        console.log(user)
         if (user.emailVerified === true) {
           req.flash('info', 'Email already verified');
           res.redirect('/')
@@ -122,7 +121,11 @@ router.get('/verify-email/:token', (req, res) => {
               res.redirect('/');
             } else {
               req.flash('success', 'Email verified');
-              res.redirect('/');
+              if (req.user) {
+                res.redirect('/account');
+              } else {
+                res.redirect(`/login?email=${user.email}`);
+              }
             }
           });
         };
@@ -130,14 +133,6 @@ router.get('/verify-email/:token', (req, res) => {
     }
   );
 });
-
-router.get('/resend-verification-email', (req, res) => {
-  // if account verified: 'already verified'
-  // else send email
-  // redirect w flash: email sent
-  req.flash('info', 'Verification email sent')
-  res.redirect('back');
-}),
 
 //-----------------------------------------------------------------------------
 // Logout
