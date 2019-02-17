@@ -56,7 +56,7 @@ exports.emailVerification = (req, res) => {
       res.redirect('back');
     } else {
       req.flash('success', 'Verification email sent');
-      res.redirect('back');
+      res.redirect('/account');
     };
   });
 };

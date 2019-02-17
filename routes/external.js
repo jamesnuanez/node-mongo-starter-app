@@ -11,12 +11,25 @@ const router   = express.Router();
 const User     = mongoose.model('User');
 
 //=============================================================================
+// Middleware
+//=============================================================================
+router.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
+//=============================================================================
 // Routes
 //=============================================================================
 //-----------------------------------------------------------------------------
 // Home
 //-----------------------------------------------------------------------------
 router.get('/', (req, res) => {
+  if (req.user) {
+    res.locals.specialMessage = `Hi ${req.user.email}, you're already logged in. <a href="/account">Go to your account</a>`;
+  } else {
+    res.locals.specialMessage = '';
+  }
   res.render('external/home', { title: 'Home'});
 });
 
@@ -90,6 +103,9 @@ router.get('/verify-email/:token', (req, res) => {
       if (err) {
         console.log(err);
         req.flash('error', err);
+        res.redirect('/');
+      } else if (!user) {
+        req.flash('error', 'Invalid verification link');
         res.redirect('/');
       } else {
         console.log(user)

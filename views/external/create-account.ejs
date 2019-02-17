@@ -1,11 +1,22 @@
 <% include ../partials/header %>
 
-<form method="POST">
-  <label for="email">Email</label>
-  <input type="email" name="email" id="email" value="<%= email %>">
-  <label for="password">Password</label>
-  <input type="password" name="password" id="password">
-  <button>Create Account</button>
-</form>
+<% if (user) { %>
+  <p>Hi <%= user.email %>, you're already logged in. <a href="/account">Go to your account</a></p>
+  <p>
+    <label>Email</label>
+    <input type="text" value="<%= user.email %>" disabled>
+    <label>Password</label>
+    <input type="password" disabled>
+    <button disabled>Create Account</button>
+  </p>
+<% } else { %>
+  <form method="POST">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" value="<%= email %>">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+    <button>Create Account</button>
+  </form>
+<% } %>
 
 <% include ../partials/footer %>

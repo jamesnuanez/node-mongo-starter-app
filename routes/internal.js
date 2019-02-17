@@ -4,6 +4,7 @@
 const express  = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const crypto   = require('crypto');
 const mail     = require('../mail/mail');
 const router   = express.Router();
 const User     = mongoose.model('User');
@@ -31,17 +32,11 @@ router.use(
 
 router.use((req, res, next) => {
   res.locals.user = req.user;
-  next();
-});
-
-router.use((req, res, next) => {
-  res.locals.siteSection = 'Internal';
-  res.locals.menu = [
-    { page: 'Account home', slug: 'account/' },
-    { page: 'Edit account', slug: 'account/edit-account' },
-    { page: 'Invite user',  slug: 'account/invite-user' },
-    { page: 'Log out',      slug: 'account/logout' },
-  ];
+  if (req.user.emailVerified === false) {
+    res.locals.specialMessage = 'Email address not verified. <a href="/account/resend-verification-email">Resend verification email</a>';
+  } else {
+    res.locals.specialMessage = '';
+  }
   next();
 });
 
@@ -79,8 +74,15 @@ router.post('/change-email/:id', (req, res) => {
             req.flash('error', err.message);
             res.redirect('back');
           } else {
-            req.flash('success', 'Email updated');
-            res.redirect('/account/account-details');
+            crypto.randomBytes(32, (err, buf) => {
+              if (err) throw err;
+              user.emailVerificationToken = buf.toString('hex');
+              user.emailVerified = false;
+              user.save((err, user) => {
+                req.flash('success', 'Email updated');
+                res.redirect('/account/account-details');
+              }); 
+            });
           }
         });
       },

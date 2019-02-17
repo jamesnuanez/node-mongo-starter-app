@@ -38,14 +38,23 @@
     </nav>
   </header>
   <hr>
+  <% if (specialMessage) { %>
+    <section id="special-message">
+      <p>
+        <%- specialMessage %>
+      </p>
+    </section>
+  <% } %>
   <% if (Object.entries(flashes).length) { %>
     <section id="flashes">
       <% Object.entries(flashes).forEach(entry => { %>
         <p>
-          <%= entry[0] %>: <%= entry[1] %>
+          <%= entry[0] %>: <%- entry[1] %>
         </p>
       <% }) %>
-      <hr>
     </section>
+  <% } %>
+  <% if (specialMessage || Object.entries(flashes).length) { %>
+      <hr>
   <% } %>
   <h1><%= title %></h1>
