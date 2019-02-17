@@ -62,34 +62,33 @@ router.get('/change-email', (req, res) => {
 });
 
 router.post('/change-email/:id', (req, res) => {
-  if (req.params.id === req.user._id.toString()) {
-    User.findByIdAndUpdate(
-      req.params.id,
-      { email: req.body.email },
-      { new: true },
-      function(err, user) {
-        req.login(user, function(err) {
-          if (err) {
-            console.log(err);
-            req.flash('error', err.message);
-            res.redirect('back');
-          } else {
-            crypto.randomBytes(32, (err, buf) => {
-              if (err) throw err;
-              user.emailVerificationToken = buf.toString('hex');
-              user.emailVerified = false;
-              user.save((err, user) => {
-                req.flash('success', 'Email updated');
-                res.redirect('/account/account-details');
-              }); 
-            });
-          }
-        });
-      },
-    );
-  } else {
+  if (req.params.id !== req.user._id.toString()) {
     req.flash('error', 'Something went wrong');
     res.redirect('/account/account-details');
+  } else {
+    User.findById(
+      req.params.id,
+      function(err, user) {
+        user.email = req.body.email;
+        user.emailVerified = false;
+        crypto.randomBytes(32, (err, buf) => {
+          if (err) throw err;
+          user.emailVerificationToken = buf.toString('hex');
+          user.save((err, user) => {
+            req.login(user, function(err) {
+              if (err) {
+                console.log(err);
+                req.flash('error', err.message);
+                res.redirect('back');
+              } else {
+                req.flash('success', 'Email updated');
+                mail.emailVerification(req, res);
+              };
+            });
+          });
+        });
+      }
+    );
   };
 });
 
@@ -202,6 +201,7 @@ router.get('/verify-email/:token', (req, res) => {
     }
   );
 });
+
 //=============================================================================
 // Export routes
 //=============================================================================
