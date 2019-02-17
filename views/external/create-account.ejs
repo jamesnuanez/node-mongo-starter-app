@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <% if (user) { %>
-  <p>Hi <%= user.email %>, you're already logged in. <a href="/account">Go to your account</a></p>
+  <p>Hi <%= user.email %>, you're already logged in. <a href="/account">Go to your account</a> or <a href="/logout">log out</a> to create a new account.</p>
   <p>
     <label>Email</label>
     <input type="text" value="<%= user.email %>" disabled>
