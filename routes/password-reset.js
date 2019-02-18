@@ -69,7 +69,7 @@ router.get('/:token', (req, res) => {
         req.flash('error', 'Password reset link has expired');
         res.redirect('/password-reset')
       } else {
-        res.render('external/password-new', { title: 'New password' });
+        res.render('external/password-new', { title: 'New password', email: user.email });
       };
     }
   )
