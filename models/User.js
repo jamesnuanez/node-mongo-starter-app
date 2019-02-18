@@ -17,6 +17,21 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   emailVerificationToken: String,
+  /*
+  Email verification timeframe is based off of the following date
+  */
+  emailChangeDate: {
+    type: Date,
+    default: Date.now,
+  },
+  /*
+  This is used to prevent the 'verification required' message from 
+  showing immediately after the verification email has been sent
+  */
+  verificationEmailSentDate: {
+    type: Date,
+    default: Date.now,
+  },
   emailVerificationDate: Date,
   passwordResetInProgress: {
     type: Boolean,

@@ -32,16 +32,22 @@ router.use(
 );
 
 /* If user's email is not verified, show a message */
+const showMessageTime = 30 * 1000;
+const lockAcountTime  = 60 * 1000;
+
 router.use((req, res, next) => {
   res.locals.user = req.user;
   if (req.originalUrl.includes('verif')) {
     return next();
   } else if (
     req.user.emailVerified === false &&
-    req.user.signupDate < (Date.now() - (24 * 60 * 60 * 1000))
+    req.user.emailChangeDate < (Date.now() - lockAcountTime)
   ) {
     return res.redirect('/account/verification-required');
-  } else if (req.user.emailVerified === false) {
+  } else if (
+    req.user.emailVerified === false &&
+    req.user.verificationEmailSentDate < (Date.now() - showMessageTime)
+  ) {
     res.locals.specialMessage = 'Email address not verified. <a href="/account/resend-verification-email">Resend verification email</a>';
   } else {
     res.locals.specialMessage = '';
@@ -82,7 +88,9 @@ router.post('/change-email/:id', (req, res) => {
         user.emailVerified = false;
         crypto.randomBytes(32, (err, buf) => {
           if (err) throw err;
+          user.emailChangeDate = Date.now();
           user.emailVerificationToken = buf.toString('hex');
+          user.verificationEmailSentDate = Date.now();
           user.save((err, user) => {
             req.login(user, function(err) {
               if (err) {
@@ -90,8 +98,11 @@ router.post('/change-email/:id', (req, res) => {
                 req.flash('error', err.message);
                 res.redirect('back');
               } else {
-                req.flash('success', 'Email updated');
-                mail.emailVerification(req, res);
+                mail.emailVerification(req, res)
+                  .then(() => {
+                    req.flash('success', `Email updated and verification email sent to ${user.email}`)
+                    res.redirect('/account/account-details')
+                  });
               };
             });
           });
@@ -171,7 +182,19 @@ router.get('/resend-verification-email', (req, res) => {
     req.flash('info', 'Email already verified');
     res.redirect('back');
   } else {
-    mail.emailVerification(req, res);
+    User.findByIdAndUpdate(
+      req.user._id,
+      { verificationEmailSentDate: Date.now() },
+      { new: true },
+      (err, user) => {
+        if (err) throw err;
+        mail.emailVerification(req, res)
+          .then(() => {
+            req.flash('success', `A new verification email has been sent to ${user.email}`)
+            res.redirect('back');
+          });
+      }
+    );
   };
 }),
 
@@ -184,8 +207,15 @@ router.get('/verify-email/:token', (req, res) => {
         req.flash('error', err);
         res.redirect('/account');
       } else if (!user) {
-        req.flash('error', 'Invalid verification link');
-        res.redirect('/account');
+          req.flash('error', 'Invalid verification link');
+        if (
+          req.user.emailVerified === false &&
+          req.user.emailChangeDate < (Date.now() - lockAcountTime)
+        ) {
+          res.redirect('/account/verification-required');
+        } else {
+          res.redirect('/account');
+        }
       } else {
         if (user.emailVerified === true) {
           req.flash('info', 'Email already verified');
@@ -210,6 +240,13 @@ router.get('/verify-email/:token', (req, res) => {
 });
 
 router.get('/verification-required', (req, res) => {
+  if (
+    req.user.emailVerified === true || 
+    req.user.emailChangeDate > (Date.now() - lockAcountTime)
+  ) {
+    req.flash('info', 'Email already verified');
+    return res.redirect('/account');
+  };
   res.render('internal/verification-required', { title: 'Verification required'})
 });
 

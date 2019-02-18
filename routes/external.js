@@ -83,8 +83,11 @@ router.post('/create-account', (req, res, next) => {
             user.emailVerificationToken = buf.toString('hex');
             user.save((err) => {
               if (err) throw err;
-              req.flash('success', 'Account created');
-              mail.emailVerification(req, res);
+              mail.emailVerification(req, res)
+                .then(() => {
+                  req.flash('success', `Account created and verification email sent to ${user.email}`);
+                  res.redirect('/account');
+                });
             });
           });
         };

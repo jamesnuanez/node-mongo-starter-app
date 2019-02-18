@@ -25,40 +25,39 @@ const transporter = nodemailer.createTransport({
 //=============================================================================
 // Email verification
 //=============================================================================
-exports.emailVerification = (req, res) => {
+exports.emailVerification = async (req, res) => {
 
-  const emailVerificationHTML = `
-  <p>
-    <a href="${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}">
-      Verify email with ${res.locals.siteName}
-    </a>
-  </p>
-  <p>An account was created on ${res.locals.siteName} with this email address.</p>
-  <p>Click the link above to verify your email.</p>
-  `;
+  try {
+    const emailVerificationHTML = `
+    <p>
+      <a href="${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}">
+        Verify email with ${res.locals.siteName}
+      </a>
+    </p>
+    <p>An account was created on ${res.locals.siteName} with this email address.</p>
+    <p>Click the link above to verify your email.</p>
+    `;
 
-  const emailVerificationText = `
-  An account was created on ${res.locals.siteName} with this email address.
-  Please visit the following URL to verify your email address.
-  ${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}
-  `;
+    const emailVerificationText = `
+    An account was created on ${res.locals.siteName} with this email address.
+    Please visit the following URL to verify your email address.
+    ${req.protocol}://${req.headers.host}/account/verify-email/${req.user.emailVerificationToken}
+    `;
 
-  transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to:   req.user.email,
-    subject: `${res.locals.siteName} | Email verification requested`,
-    text: emailVerificationText,
-    html: emailVerificationHTML,
-  }, function(error, info) {
-    if (error) {
-      console.log(error);
-      req.flash('error', error);
-      res.redirect('back');
-    } else {
-      req.flash('success', 'Verification email sent');
-      res.redirect('/account');
-    };
-  });
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to:   req.user.email,
+      subject: `${res.locals.siteName} | Email verification requested`,
+      text: emailVerificationText,
+      html: emailVerificationHTML,
+    });
+    
+  } catch (error) {
+    console.log(error);
+    req.flash('error', error);
+    res.redirect('back');
+  }
+
 };
 
 //=============================================================================
