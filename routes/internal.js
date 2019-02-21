@@ -9,6 +9,11 @@ const mail     = require('../mail/mail');
 const router   = express.Router();
 const User     = mongoose.model('User');
 
+const showMessageTime = 30 * 1000;
+const lockAcountTime  = 60 * 1000;
+const revertEmailLinkExpirationTime = 2 * 60 * 1000;
+const revertEmailLinkExpirationTimeFormatted = 'two minutes';
+
 //=============================================================================
 // Middleware
 //=============================================================================
@@ -32,9 +37,6 @@ router.use(
 );
 
 /* If user's email is not verified, show a message */
-const showMessageTime = 30 * 1000;
-const lockAcountTime  = 60 * 1000;
-
 router.use((req, res, next) => {
   res.locals.user = req.user;
   if (req.originalUrl.includes('verif')) {
@@ -77,15 +79,45 @@ router.get('/change-email', (req, res) => {
 });
 
 router.post('/change-email/:id', (req, res) => {
+  // If user doesn't match (logged out and into another account or changed post url)
   if (req.params.id !== req.user._id.toString()) {
     req.flash('error', 'Something went wrong');
     res.redirect('/account/account-details');
+
+  // If email being submitted is same as exiting email
+  } else if (req.user.email === req.body.email) {
+    req.flash('info', 'Email was not changed');
+    res.redirect('/account/account-details');
+
+  // If trying to change email twice before original email has confirmed
+  } else if (
+    req.user.emailChangeDate > Date.now() - revertEmailLinkExpirationTime && 
+    req.user.emailChangeConfirmed === false
+  ) {
+    req.flash('error', `You cannot change your account twice in 
+      ${revertEmailLinkExpirationTimeFormatted} unless you confirm
+      the change through the link sent to the old email.`)
+    res.redirect('/account/account-details');
+
+  // Otherwise go ahead
   } else {
-    User.findById(
-      req.params.id,
-      function(err, user) {
+    User.findById(req.params.id, (err, user) => {
+      // Get old email token (to cancel email change)
+      crypto.randomBytes(32, (err, buf) => {
+        if (err) throw err;
+        const oldEmail = user.email;
+        const oldEmailToken = buf.toString('hex');
+        user.oldEmails.push({
+          oldEmail,
+          dateAdded: user.emailChangeDate,
+          dateReplaced: Date.now(),
+          oldEmailToken,
+          wasVerified: user.emailVerified,
+        })
         user.email = req.body.email;
         user.emailVerified = false;
+        user.emailChangeConfirmed = false;
+        // Get new email verification token
         crypto.randomBytes(32, (err, buf) => {
           if (err) throw err;
           user.emailChangeDate = Date.now();
@@ -98,7 +130,10 @@ router.post('/change-email/:id', (req, res) => {
                 req.flash('error', err.message);
                 res.redirect('back');
               } else {
-                mail.emailVerification(req, res)
+                mail.emailChangeNotification(req, res, oldEmail, oldEmailToken)
+                  .then(() => {
+                    mail.emailVerification(req, res)
+                  })
                   .then(() => {
                     req.flash('success', `Email updated and verification email sent to ${user.email}`)
                     res.redirect('/account/account-details')
@@ -107,8 +142,8 @@ router.post('/change-email/:id', (req, res) => {
             });
           });
         });
-      }
-    );
+      });
+    });
   };
 });
 

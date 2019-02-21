@@ -61,6 +61,64 @@ exports.emailVerification = async (req, res) => {
 };
 
 //=============================================================================
+// Email changed (notification to old email address)
+//=============================================================================
+exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken, linkExpirationTime) => {
+
+  try {
+    const emailChangeNotificationHTML = `
+    <p>
+      The email on your account at ${res.locals.siteName} has been changed:
+    </p>
+    <p>
+      Old email: ${oldEmail}
+    </p>
+    <p>
+      New email: ${req.user.email}
+    </p>
+    <p>
+      Please click one of the links below to indicate if you intended to make this change:
+    </p>
+    <p>
+      <a href="${req.protocol}://${req.headers.host}/email-change/confirm/${oldEmailToken}">
+        I authorized this change
+      </a>
+    </p>
+    <p>
+      <a href="${req.protocol}://${req.headers.host}/email-change/revert/${oldEmailToken}">
+        I want to change the email back
+      </a>
+    </p>
+    <p>
+      Link expires in ${linkExpirationTime}.
+    </p>
+    `;
+
+    const emailChangeNotificationText = `
+    The email on your account at ${res.locals.siteName} has been changed from ${oldEmail} to ${req.user.email}.
+
+    If you did not make this change, please visit the following URL to cancel the email change and create a new password:
+
+    ${req.protocol}://${req.headers.host}/account/email-change/revert/${oldEmailToken}
+    `;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to:   oldEmail,
+      subject: `${res.locals.siteName} | Email has been changed`,
+      text: emailChangeNotificationText,
+      html: emailChangeNotificationHTML,
+    });
+    
+  } catch (error) {
+    console.log(error);
+    req.flash('error', error);
+    res.redirect('back');
+  }
+
+};
+
+//=============================================================================
 // Password reset
 //=============================================================================
 exports.passwordReset = (req, res, user) => {

@@ -1,0 +1,10 @@
+<% include ../partials/header %>
+
+<p>
+  Your email was changed to <%= user.email %>
+</p>
+<form method="POST">
+  <button>Change back to <%= oldEmail %></button>
+</form>
+
+<% include ../partials/footer %>

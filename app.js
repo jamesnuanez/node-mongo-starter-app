@@ -93,10 +93,12 @@ app.use((req, res, next) => {
 const external      = require('./routes/external');
 const internal      = require('./routes/internal');
 const passwordReset = require('./routes/password-reset');
+const emailChange   = require('./routes/email-change');
 
 app.use('/',               external);
 app.use('/account/',       internal);
 app.use('/password-reset', passwordReset)
+app.use('/email-change',   emailChange)
 
 //=============================================================================
 // Launch app

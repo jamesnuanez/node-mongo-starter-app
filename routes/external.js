@@ -10,6 +10,9 @@ const mail     = require('../mail/mail')
 const router   = express.Router();
 const User     = mongoose.model('User');
 
+const revertEmailLinkExpirationTime = 2 * 60 * 1000;
+const revertEmailLinkExpirationTimeFormatted = 'two minutes';
+
 //=============================================================================
 // Middleware
 //=============================================================================

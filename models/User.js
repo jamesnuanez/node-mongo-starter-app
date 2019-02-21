@@ -17,6 +17,14 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   emailVerificationToken: String,
+
+  /*
+  set to false when email changed
+  set back to true if original email says yes this change was correct
+  cannot change email more than once in given time unless this is true
+  */
+  emailChangeConfirmed: Boolean,
+
   /*
   Email verification timeframe is based off of the following date
   */
@@ -24,6 +32,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  
   /*
   This is used to prevent the 'verification required' message from 
   showing immediately after the verification email has been sent
@@ -40,6 +49,21 @@ const userSchema = new mongoose.Schema({
   passwordResetRequestDate: Date,
   passwordResetToken: String,
   passwordResetTokenExpiration: Date,
+  oldEmails: [{
+    oldEmail: String,
+    dateAdded: Date,
+    dateReplaced: Date,
+    oldEmailToken: String,
+    wasVerified: Boolean,
+    confirmedReplacement: Boolean,
+    revertedToThisEmail: Boolean,
+  }],
+  rejectedEmails: [{
+    rejectedEmail: String,
+    dateAdded: Date,
+    dateRejected: Date,
+    wasVerified: Boolean,
+  }],
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
