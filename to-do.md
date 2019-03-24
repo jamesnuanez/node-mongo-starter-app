@@ -1,7 +1,7 @@
 # To do
 * When posting data, check if post is for current user
-    `if (req.params.id !== req.user._id.toString()) { /* don't allow post */ }`
-    `if (req.body.id   !== req.user._id.toString()) { /* don't allow post */ }`
+  - `if (req.params.id !== req.user._id.toString()) { /* don't allow post */ }`
+  - `if (req.body.id   !== req.user._id.toString()) { /* don't allow post */ }`
 * Don't require login for email verification (but add an "undo" option on the verification confirmation page)
 * When clicking an email link, if logged in as a different user than expected by email, log out first
 * If session times out, say session timed out (don't just say that you need to log in)
