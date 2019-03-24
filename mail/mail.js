@@ -47,7 +47,7 @@ exports.emailVerification = async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to:   req.user.email,
-      subject: `${res.locals.siteName} | Email verification requested`,
+      subject: `${res.locals.siteName} | Email verification required`,
       text: emailVerificationText,
       html: emailVerificationHTML,
     });
@@ -68,7 +68,7 @@ exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken, link
   try {
     const emailChangeNotificationHTML = `
     <p>
-      The email on your account at ${res.locals.siteName} has been changed:
+      Your email on ${res.locals.siteName} has been changed:
     </p>
     <p>
       Old email: ${oldEmail}
