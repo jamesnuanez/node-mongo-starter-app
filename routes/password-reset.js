@@ -12,7 +12,7 @@ const User     = mongoose.model('User');
 // Routes
 //=============================================================================
 //-----------------------------------------------------------------------------
-// Password reset request form
+// Password reset request
 //-----------------------------------------------------------------------------
 router.get('/', (req, res) => {
   res.render('external/password-reset', { title: 'Password reset'});
@@ -25,27 +25,21 @@ router.post('/', (req, res) => {
     return;
   }
   User.findOne({ email: req.body.email }, (err, user) => {
-    console.log('2');
     if (err) {
-      console.log('3');
       console.log(err);
       req.flash('error', err);
       res.redirect('back');
     } else if (!user) {
-      console.log('4');
       req.flash('error', 'User does not exist');
       res.redirect('back');
     } else {
-      console.log('5');
       crypto.randomBytes(32, (err, buf) => {
-        console.log('6');
         if (err) throw err;
         user.passwordResetInProgress = true;
         user.passwordResetRequestDate = Date.now();
         user.passwordResetToken = buf.toString('hex');
         user.passwordResetTokenExpiration = Date.now() + (60 * 1000);
         user.save((err, user) => {
-          console.log('7');
           if (err) throw err;
           mail.passwordReset(req, res, user);
         })
