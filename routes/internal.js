@@ -9,10 +9,13 @@ const mail     = require('../mail/mail');
 const router   = express.Router();
 const User     = mongoose.model('User');
 
-const showMessageTime = 30 * 1000;
-const lockAcountTime  = 60 * 1000;
-const revertEmailLinkExpirationTime = 2 * 60 * 1000;
-const revertEmailLinkExpirationTimeFormatted = 'two minutes';
+//=============================================================================
+// Timeouts
+//=============================================================================
+const showMessageTime =  5 * 60 * 1000; // 5 minutes
+const lockAcountTime  = 60 * 60 * 1000; // 1 hour
+const revertEmailLinkExpirationTime = 24 * 60 * 60 * 1000;  // 1 day
+const revertEmailLinkExpirationTimeFormatted = 'one day';
 
 //=============================================================================
 // Middleware
