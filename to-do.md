@@ -1,4 +1,5 @@
 # To do
+* catch-all/error route
 * When posting data, check if post is for current user
   - `if (req.params.id !== req.user._id.toString()) { /* don't allow post */ }`
   - `if (req.body.id   !== req.user._id.toString()) { /* don't allow post */ }`
@@ -17,6 +18,8 @@
   - Log traffic to database (include datetime, user id, and URL)
   - Log errors to database
   - Log events to database: sign-up, login fail, password reset, user invite, account deletion, etc. (include datetime, user id, event type, data before change, data after change)
+* Change password: create new error message if old password entered incorrectly (currently says "Password or username is incorrect", but should say "Old password is incorrect")
+* Change email: create new message text for email sent to new email address (currently says "An account was created on Site Name with this email address")
 
 # Bugs
 * POST after session expires gives a "Cannot GET /..." error page
