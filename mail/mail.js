@@ -63,10 +63,10 @@ exports.emailVerification = async (req, res) => {
 //=============================================================================
 // Email changed (notification to old email address)
 //=============================================================================
-exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken) => {
+exports.emailChangeNotificationOld = async (req, res, oldEmail, oldEmailToken) => {
 
   try {
-    const emailChangeNotificationHTML = `
+    const emailChangeNotificationOldHTML = `
     <p>
       Your email on ${res.locals.siteName} has been changed:
     </p>
@@ -91,7 +91,7 @@ exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken) => {
     </p>
     `;
 
-    const emailChangeNotificationText = `
+    const emailChangeNotificationOldText = `
     The email on your account at ${res.locals.siteName} has been changed from ${oldEmail} to ${req.user.email}.
 
     If you did not make this change, please visit the following URL to cancel the email change and create a new password:
@@ -103,10 +103,48 @@ exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken) => {
       from: process.env.EMAIL_FROM,
       to:   oldEmail,
       subject: `${res.locals.siteName} | Email has been changed`,
-      text: emailChangeNotificationText,
-      html: emailChangeNotificationHTML,
+      text: emailChangeNotificationOldText,
+      html: emailChangeNotificationOldHTML,
     });
     
+  } catch (error) {
+    console.log(error);
+    req.flash('error', error);
+    res.redirect('back');
+  }
+
+};
+
+//=============================================================================
+// Email changed (notification to new email address)
+//=============================================================================
+exports.emailChangeNotificationNew = async (req, res) => {
+
+  try {
+    const emailChangeNotificationNewHTML = `
+    <p>
+      <a href="${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}">
+        Verify email with ${res.locals.siteName}
+      </a>
+    </p>
+    <p>An account on ${res.locals.siteName} was updated to use your email address.</p>
+    <p>Click the link above to verify your email.</p>
+    `;
+
+    const emailChangeNotificationNewText = `
+    An account on ${res.locals.siteName} was updated to use your email address.
+    Please visit the following URL to verify your email address.
+    ${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}
+    `;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to:   req.user.email,
+      subject: `${res.locals.siteName} | Email verification required`,
+      text: emailChangeNotificationNewText,
+      html: emailChangeNotificationNewHTML,
+    });
+
   } catch (error) {
     console.log(error);
     req.flash('error', error);

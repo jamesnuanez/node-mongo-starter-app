@@ -133,9 +133,9 @@ router.post('/change-email/:id', (req, res) => {
                 req.flash('error', err.message);
                 res.redirect('back');
               } else {
-                mail.emailChangeNotification(req, res, oldEmail, oldEmailToken)
+                mail.emailChangeNotificationOld(req, res, oldEmail, oldEmailToken)
                   .then(() => {
-                    mail.emailVerification(req, res)
+                    mail.emailChangeNotificationNew(req, res)
                   })
                   .then(() => {
                     req.flash('success', `Email updated and verification email sent to ${user.email}`)
