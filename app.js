@@ -100,6 +100,11 @@ app.use('/account/',       internal);
 app.use('/password-reset', passwordReset)
 app.use('/email-change',   emailChange)
 
+// Catch-all route
+app.get('*', (req, res, next) => {
+  res.render('error', { title: 'Error' });
+});
+
 //=============================================================================
 // Launch app
 //=============================================================================

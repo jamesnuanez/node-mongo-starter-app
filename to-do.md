@@ -1,5 +1,4 @@
 # To do
-* catch-all/error route
 * When posting data, check if post is for current user
   - `if (req.params.id !== req.user._id.toString()) { /* don't allow post */ }`
   - `if (req.body.id   !== req.user._id.toString()) { /* don't allow post */ }`
