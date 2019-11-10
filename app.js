@@ -57,7 +57,7 @@ passport.deserializeUser(User.deserializeUser());
 // Applies to all routes
 app.use((req, res, next) => {
   console.log(`${new Date()} ${req.originalUrl}`);
-  res.locals.siteName = 'Site Name';
+  res.locals.siteName = 'Node.js MongoDB Starter App';
   res.locals.flashes  = req.flash();
   res.locals.specialMessage = '';
   next();
