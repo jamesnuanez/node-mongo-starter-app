@@ -63,7 +63,7 @@ exports.emailVerification = async (req, res) => {
 //=============================================================================
 // Email changed (notification to old email address)
 //=============================================================================
-exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken, linkExpirationTime) => {
+exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken) => {
 
   try {
     const emailChangeNotificationHTML = `
@@ -88,9 +88,6 @@ exports.emailChangeNotification = async (req, res, oldEmail, oldEmailToken, link
       <a href="${req.headers.origin}/email-change/revert/${oldEmailToken}">
         I want to change the email back
       </a>
-    </p>
-    <p>
-      Link expires in ${linkExpirationTime}.
     </p>
     `;
 
