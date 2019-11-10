@@ -34,12 +34,12 @@ exports.emailVerification = async (req, res) => {
         Verify email with ${res.locals.siteName}
       </a>
     </p>
-    <p>An account was created on ${res.locals.siteName} with this email address.</p>
+    <p>An account was created on ${res.locals.siteName} with your email address.</p>
     <p>Click the link above to verify your email.</p>
     `;
 
     const emailVerificationText = `
-    An account was created on ${res.locals.siteName} with this email address.
+    An account was created on ${res.locals.siteName} with your email address.
     Please visit the following URL to verify your email address.
     ${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}
     `;
