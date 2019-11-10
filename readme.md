@@ -1,17 +1,25 @@
-# Express-Mongoose-Passport Starter App
-Starter code for a Node app with user authentication using Passport and Mongoose.
+# Node.js MongoDB Starter App
+This fully functional starter application is built with Node.js, Express, MongoDB, Mongoose, Passport.js, and Nodemailer, and includes full-featured user management.
 
-## Technology used
+### Features
+* Account creation
+* User authentication
+* Password reset
+* Verification emails
+* Email and password change
+* User invitation
+* Account deletion
+
+### Technology used
 * Node.js
 * Express
 * MongoDB
 * Mongoose
-* Passport
+* Passport.js
 * Nodemailer
-* Flash messages
 * EJS
 
-## What's included
+## Details
 
 ### External features
 * account creation
@@ -48,7 +56,7 @@ Starter code for a Node app with user authentication using Passport and Mongoose
   - remember originally requested page and go back there (remembered until they close browser?)
 * log out
 
-## What's not included
+### What's not included
 * CSS
 * Front end JavaScript
 * User's name (email address is used in all places a name would be used)
