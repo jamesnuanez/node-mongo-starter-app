@@ -27,13 +27,6 @@ const transporter = nodemailer.createTransport({
 //=============================================================================
 exports.emailVerification = async (req, res) => {
 
-	console.log('------------------------------');
-  console.log(req.protocol);
-	console.log('------------------------------');
-	console.log(req.headers.host);
-	console.log('------------------------------');
-	console.log(req.headers);
-	console.log('------------------------------');
   try {
     const emailVerificationHTML = `
     <p>
