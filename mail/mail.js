@@ -30,7 +30,7 @@ exports.emailVerification = async (req, res) => {
   try {
     const emailVerificationHTML = `
     <p>
-      <a href="${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}">
+      <a href="${process.env.HOSTNAME}/account/verify-email/${req.user.emailVerificationToken}">
         Verify email with ${res.locals.siteName}
       </a>
     </p>
@@ -41,7 +41,7 @@ exports.emailVerification = async (req, res) => {
     const emailVerificationText = `
     An account was created on ${res.locals.siteName} with your email address.
     Please visit the following URL to verify your email address.
-    ${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}
+    ${process.env.HOSTNAME}/account/verify-email/${req.user.emailVerificationToken}
     `;
 
     await transporter.sendMail({
@@ -80,12 +80,12 @@ exports.emailChangeNotificationOld = async (req, res, oldEmail, oldEmailToken) =
       Please click one of the links below to indicate if you intended to make this change:
     </p>
     <p>
-      <a href="${req.headers.origin}/email-change/confirm/${oldEmailToken}">
+      <a href="${process.env.HOSTNAME}/email-change/confirm/${oldEmailToken}">
         I authorized this change
       </a>
     </p>
     <p>
-      <a href="${req.headers.origin}/email-change/revert/${oldEmailToken}">
+      <a href="${process.env.HOSTNAME}/email-change/revert/${oldEmailToken}">
         I want to change the email back
       </a>
     </p>
@@ -96,7 +96,7 @@ exports.emailChangeNotificationOld = async (req, res, oldEmail, oldEmailToken) =
 
     If you did not make this change, please visit the following URL to cancel the email change and create a new password:
 
-    ${req.headers.origin}/account/email-change/revert/${oldEmailToken}
+    ${process.env.HOSTNAME}/account/email-change/revert/${oldEmailToken}
     `;
 
     await transporter.sendMail({
@@ -123,7 +123,7 @@ exports.emailChangeNotificationNew = async (req, res) => {
   try {
     const emailChangeNotificationNewHTML = `
     <p>
-      <a href="${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}">
+      <a href="${process.env.HOSTNAME}/account/verify-email/${req.user.emailVerificationToken}">
         Verify email with ${res.locals.siteName}
       </a>
     </p>
@@ -134,7 +134,7 @@ exports.emailChangeNotificationNew = async (req, res) => {
     const emailChangeNotificationNewText = `
     An account on ${res.locals.siteName} was updated to use your email address.
     Please visit the following URL to verify your email address.
-    ${req.headers.origin}/account/verify-email/${req.user.emailVerificationToken}
+    ${process.env.HOSTNAME}/account/verify-email/${req.user.emailVerificationToken}
     `;
 
     await transporter.sendMail({
@@ -160,7 +160,7 @@ exports.passwordReset = (req, res, user) => {
 
   const passwordResetHTML = `
   <p>
-    <a href="${req.headers.origin}/password-reset/${user.passwordResetToken}">
+    <a href="${process.env.HOSTNAME}/password-reset/${user.passwordResetToken}">
       Create a new password for ${res.locals.siteName}
     </a>
   </p>
@@ -171,7 +171,7 @@ exports.passwordReset = (req, res, user) => {
   const passwordResetText = `
   A password reset was requested for your account at ${res.locals.siteName}.
   Please visit the following URL to create a new password.
-  ${req.headers.origin}/password-reset/${user.passwordResetToken}
+  ${process.env.HOSTNAME}/password-reset/${user.passwordResetToken}
   `;
 
   transporter.sendMail({
@@ -201,7 +201,7 @@ exports.inviteUser = (req, res) => {
       ${req.user.email} has invited you to create an account on ${res.locals.siteName}.
     </p>
     <p>
-      <a href="${req.headers.origin}/create-account?email=${req.body.email}">
+      <a href="${process.env.HOSTNAME}/create-account?email=${req.body.email}">
         Click here to create an account
       </a>
     </p>
@@ -210,7 +210,7 @@ exports.inviteUser = (req, res) => {
   const inviteUserText = `
     ${req.user.email} has invited you to create an account on ${res.locals.siteName}.
     Visit the following link to create an account.
-    ${req.headers.origin}/create-account?email=${req.body.email}
+    ${process.env.HOSTNAME}/create-account?email=${req.body.email}
   `;
 
   transporter.sendMail({
