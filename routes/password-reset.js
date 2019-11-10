@@ -71,7 +71,7 @@ router.get('/:token', (req, res) => {
 
 router.post('/:token', (req, res) => {
   if (!req.body.password) {
-    req.flash('error', 'Email required');
+    req.flash('error', 'New password required');
     res.redirect('back');
     return;
   }
